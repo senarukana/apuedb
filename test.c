@@ -38,16 +38,34 @@ void to_lowercase(char *str) {
 // 	return (char *)memcpy(s, str, n);
 // }
 
-int main() {
+int main(int argc, char **argv) {
 	DBHANDLE db;
-	int rc, len;
+	int rc,c, flags, len;
 	char *ptr_command, *ptr_key, *find;
 	char *command, *key, *value;
 	command = key = value = NULL;
 	char *help_cmd = "command list:\n [add | update] key value \n [del | find] key \n [open | close] dbname\n [help count iterate exit]";
 
-	if ((db = db_open("apuedb.db", O_RDWR | O_CREAT | O_TRUNC, FILE_MODE)) == NULL) {
-		err_sys("db_open error");
+	flags = O_RDWR;
+	while ((c = getopt(argc, argv, "nt?")) != -1) {
+		switch (c) {
+		case 'n':
+			flags |= O_CREAT;
+			break;
+		case 't':
+			flags |= O_TRUNC;
+			break;
+		case '?':
+			err_quit("usage: [-n] create new file [-t] truncate db <filename>");
+			break;
+		}
+	}
+	if (optind != argc - 1) {
+		err_quit("usage: [-n] create new file [-t] truncate db <filename>");
+	}
+
+	if ((db = db_open(argv[optind], flags, FILE_MODE)) == NULL) {
+		err_sys("db_open %s error", argv[optind]);
 	}
 
 	for (;;) {

@@ -29,5 +29,5 @@ test: ${STATIC_LIB} test.o
 	gcc ${CFLAGS} -o test test.o ${STATIC_LIB}
 
 clean:
-	rm -f *.o core test $(STATIC_LIB) ${DYNAMIC_LIB}
+	rm -f *.o *.dat *.idx core test $(STATIC_LIB) ${DYNAMIC_LIB}
  
